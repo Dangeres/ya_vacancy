@@ -1,7 +1,9 @@
 from jsoner import return_json, save_json_with_ident
 
+
 import requests
 import faker
+import time
 
 
 FILE_NAME = "vacancy.json"
@@ -52,6 +54,7 @@ def main():
             "tile": vacancy.get('title'),
             "short_summary": vacancy.get('short_summary'),
             "id": vacancy.get('id'),
+            "insert_time": int(time.time())
         }
 
         print(vacancy_data[str(vacancy['id'])])
