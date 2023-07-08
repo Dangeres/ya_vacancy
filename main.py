@@ -8,6 +8,28 @@ import time
 
 FILE_NAME = "vacancy.json"
 
+settings = return_json('settings.json').get('data', {})
+
+
+def send_telegram(uid, message):
+    try:
+        result = requests.post(
+            url = settings.get('host') + '/message',
+            json = {
+                'id': uid,
+                'sender': settings.get('sender'),
+                'text': message,
+            }
+        )
+
+        print(message)
+
+        return result.status_code == 200 and result.json().get('success')
+    except Exception as e:
+        print(e)
+
+    return False
+
 
 def main():
     yandex_api_url = 'https://yandex.ru/jobs/api/publications/'
@@ -57,11 +79,30 @@ def main():
             "insert_time": int(time.time())
         }
 
-        print(vacancy_data[str(vacancy['id'])])
+        if settings.get('host') and settings.get('sender'):
+            while True:
+                result = send_telegram(
+                    uid = 'yandex_vacancies_%i' % (
+                        vacancy.get('id'),
+                    ),
+                    message = 'Новая вакансия от яндекс %s' % (
+                        builded_link,
+                    ),
+                )
+
+                if result:
+                    break
+
+        print(
+            'Новая вакансия от яндекс %s' % (
+                builded_link,
+            )
+        )
 
     save_json_with_ident(
         FILE_NAME,
         vacancy_data,
+        ascii_=False,
     )
 
 
