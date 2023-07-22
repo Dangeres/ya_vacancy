@@ -19,6 +19,9 @@ def send_telegram(uid, message):
                 'id': uid,
                 'sender': settings.get('sender'),
                 'text': message,
+            },
+            headers = {
+                "token": settings.get('token'),
             }
         )
 
@@ -79,7 +82,7 @@ def main():
             "insert_time": int(time.time())
         }
 
-        if settings.get('host') and settings.get('sender'):
+        if settings.get('host') and settings.get('sender') and settings.get('token'):
             while True:
                 result = send_telegram(
                     uid = 'yandex_vacancies_%i' % (
